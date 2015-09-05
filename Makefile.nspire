@@ -1,0 +1,24 @@
+CC = nspire-gcc
+
+CFLAGS = -Ofast  -I./ -I/usr/include/SDL $(DEFINES)
+LDFLAGS = -lSDL -lm
+DEFINES = -DNOTPSP -D__GP2X_SCREEN__ -DNSPIRE -DNOSOUND -DNODEBUG -DEMBED
+OUTPUT = tailtale.elf
+
+SOURCES = ./src/bootmain.c ./src/debug.c ./src/input.c ./src/sound.c ./src/grp_screen.c ./src/grp_texture.c ./src/grp_sprite.c ./src/gamemain.c ./src/puz_trial.c ./src/puz_base.c ./src/puz_disp.c
+OBJS = ${SOURCES:.c=.o}
+
+all: ${OUTPUT} genh
+
+${OUTPUT}:${OBJS}
+	${CC} -o ${OUTPUT} ${SOURCES} ${CFLAGS} ${LDFLAGS} ${DEFINES} 
+	
+genh:
+	genzehn --input ${OUTPUT} --output ${OUTPUT}.tns --compress
+	make-prg ${OUTPUT}.tns tailtale.tns
+	rm ./${OUTPUT}
+	rm ./${OUTPUT}.tns
+	
+clean:
+	rm *.o
+	rm tailtale.tns

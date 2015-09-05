@@ -1,0 +1,24 @@
+CC = gcc
+CXX = g++
+
+CFLAGS = -Os -fomit-frame-pointer -I./src -I./src/gfx -I/boot/system/index/include/SDL -I/boot/system/index/include -I/resources/indexes/include -I/resources/indexes/include/SDL -I. `sdl-config --cflags` $(DEFINES)
+LDFLAGS = `sdl-config --libs` -lSDL_mixer -lm -lsyllable -lstdc++
+DEFINES = -DNOTPSP -DFRAMELIMIT -DNODEBUG -DSDLGFX_SCALING -DSYLLABLE
+OUTPUT = tailtale
+
+SOURCES = ./src/bootmain.c ./src/debug.c ./src/input.c ./src/sound.c  ./src/grp_texture.c ./src/grp_sprite.c ./src/gamemain.c ./src/puz_trial.c ./src/puz_base.c ./src/puz_disp.c ./src/gfx/SDL_rotozoom.c ./src/grp_screen.c $(SOURCES_CPLUS)
+SOURCES_CPLUS = ./src/get_resolution.cpp
+OBJS = ${SOURCES:.c=.o} ${SOURCES:.cpp=.o}
+
+all: ${OUTPUT}
+	
+cplusplus:
+	${CXX} -c $(SOURCES_CPLUS)
+
+${OUTPUT}:${OBJS}
+	${CC} -o ${OUTPUT} ${SOURCES} ${CFLAGS} ${LDFLAGS}
+
+clean:
+	rm ${OUTPUT}
+	rm ./src/*.o
+	rm ./src/gfx/*.o

@@ -1,0 +1,5 @@
+OUTFILE = tailtale
+SOURCES = ./src/bootmain.o ./src/debug.o ./src/input.o ./src/sound.o ./src/grp_screen.o ./src/grp_texture.o ./src/grp_sprite.o ./src/gamemain.o ./src/puz_trial.o ./src/puz_base.o ./src/puz_disp.o
+CFLAGS = -Os -DNOTPSP -DFRAMELIMIT -DNODEBUG -DNO_SNPRINTF -DKOLIBRI -DNOSOUND -I/home/hatsune/menuetos/include/SDL
+LIBS = -lm -lSDL
+include $(MENUETDEV)/makefiles/Makefile_for_program

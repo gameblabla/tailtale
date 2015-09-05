@@ -1,0 +1,87 @@
+# --- puzzle02 makefile
+# $ID: $
+#
+
+PCCC     = gcc
+PCCFLAGS = -O2 -g -Wall -DDEBUG -DNOTPSP
+PCLIBS   = -L/usr/local/lib
+PCINCLUDE = -I/usr/local/mingw32/include -I/usr/local/mingw32/include/SDL
+
+# --- source code target
+PCOBJS = bootmain.o debug.o input.o sound.o \
+         grp_screen.o grp_texture.o grp_sprite.o
+
+PSPOBJS = bootmain.o psp_debug.o input.o sound.o \
+         psp_grp_screen.o grp_texture.o grp_sprite.o
+
+# - your apprication object
+
+APPOBJS = gamemain.o puz_base.o puz_disp.o puz_trial.o
+
+OBJS = $(PSPOBJS) $(APPOBJS)
+
+#
+TARGET = puzzle
+
+CFLAGS = -O2 -g -Wall -DDEBUG
+LIBS=
+LIBDIR =
+LDFLAGS =
+
+EXTRA_TARGETS = EBOOT.PBP kxploit
+EXTRA_CLEAN = pcclean
+
+# --- PC SDL
+PCCFLAGS += $(shell sdl-config --cflags)
+PCLIBS += $(shell sdl-config --libs)
+PCLIBS += -lSDL_mixer -lm -lSDL -lSDLmain -lSDL_image -lpng -lz
+
+PSP_EBOOT_TITLE = PUZ02-DEV
+PSP_DIR_NAME = PUZ02
+
+PSPSDK=$(shell psp-config --pspsdk-path)
+PSPBIN = $(PSPSDK)/../bin
+CFLAGS += $(shell $(PSPBIN)/sdl-config --cflags)
+LIBS += $(shell $(PSPBIN)/sdl-config --libs)
+LIBS += -lSDL_mixer -lm -lSDL -lSDLmain -lSDL_image -lpng -lz -ljpeg
+include $(PSPSDK)/lib/build.mak
+
+
+
+
+pc : pcobjs
+	$(PCCC) -o $(TARGET) $(PCOBJS) $(APPOBJS) $(PCLIBS)
+
+pcobjs :
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c bootmain.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c debug.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c grp_screen.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c grp_texture.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c grp_sprite.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c input.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c sound.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c gamemain.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c puz_base.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c puz_disp.c
+	$(PCCC) $(PCCFLAGS) $(PCINCLUDE) -c puz_trial.c
+
+pcclean :
+	rm -rf *.o $(TARGET) $(TARGET)% $(TARGET).exe *~
+
+bootmain.o : bootmain.c bootmain.h debug.h
+debug.o : debug.c debug.h
+psp_debug.o : psp_debug.c debug.h
+grp_screen.o : grp_screen.c grp_screen.h grp_texture.h
+psp_grp_screen.o : psp_grp_screen.c grp_screen.h grp_texture.h
+input.o : input.c
+sound.o : sound.h
+grp_texture.o : grp_texture.c grp_texture.h
+grp_sprite.o : grp_sprite.c grp_sprite.h
+gamemain.o : gamemain.c gamemain.h grp_screen.h input.h sound.h debug.h \
+             grp_texture.h grp_sprite.h
+puz_base.o : puz_base.c puz_base.h
+puz_disp.o : puz_disp.c puz_disp.h puz_base.h
+puz_trial.o : puz_trial.c puz_trial.h puz_disp.h puz_base.h
+
+
+

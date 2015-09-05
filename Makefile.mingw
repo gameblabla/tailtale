@@ -1,0 +1,19 @@
+CC = i586-mingw32msvc-gcc
+
+CFLAGS = -I./src -I./src/gfx -Os -fomit-frame-pointer -Wall -I/usr/i586-mingw32msvc/include/SDL  $(DEFINES)
+LDFLAGS = -lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows
+DEFINES = -DNOTPSP -DFRAMELIMIT -DNODEBUG -DNO_SNPRINTF -DSDLGFX_SCALING -DEMBED -DWIN32 -DBUILD_DLL
+OUTPUT = tailtale.exe
+
+SOURCES = ./src/bootmain.c ./src/debug.c ./src/input.c ./src/sound.c ./src/grp_texture.c ./src/grp_sprite.c ./src/gamemain.c ./src/puz_trial.c ./src/puz_base.c ./src/puz_disp.c ./src/grp_screen.c ./src/get_resolution.cpp ./src/gfx/SDL_rotozoom.c
+OBJS = ${SOURCES:.c=.o} ${SOURCES:.cpp=.o}
+
+all: ${OUTPUT}
+
+${OUTPUT}:${OBJS}
+	${CC} -o ${OUTPUT} ${SOURCES} ${CFLAGS} ${LDFLAGS}
+
+clean:
+	rm ${OUTPUT}
+	rm ./src/*.o
+	rm ./src/gfx/*.o
