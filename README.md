@@ -1,4 +1,3 @@
-===========
 Tail-Tale
 ===========
 Game by fumi2kick, rerofumi and pyonkey-matsuo 
