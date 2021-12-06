@@ -24,6 +24,10 @@
 #include "gfx/SDL_rotozoom.h"
 #endif
 
+#ifdef DREAMCAST
+#include <SDL/SDL_dreamcast.h>
+#endif
+
 #include "debug.h"
 
 void Render(TGameScreen *class, TGameSprite *spr);
@@ -42,12 +46,16 @@ TGameScreen *TGameScreen_Create(int width, int height, int depth)
 	
 	SDL_ShowCursor(SDL_DISABLE);
 
+#ifdef DREAMCAST
+	SDL_DC_SetVideoDriver(SDL_DC_DMA_VIDEO);
+#endif
+
 #ifdef SDLGFX_SCALING
 
 	// get real screen size !
 	Get_Resolution();
 	
-	real_screen = SDL_SetVideoMode(screen_scale.w_display, screen_scale.h_display, depth, SDL_SWSURFACE | SDL_NOFRAME); 
+	real_screen = SDL_SetVideoMode(screen_scale.w_display, screen_scale.h_display, depth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_NOFRAME); 
 
 	screen_scale.w_scale = screen_scale.w_display / width;
 	screen_scale.h_scale = screen_scale.h_display / height;
@@ -62,9 +70,9 @@ TGameScreen *TGameScreen_Create(int width, int height, int depth)
 #else
 
 #ifdef SYLLABLE
-	class->Screen = SDL_SetVideoMode(width, height, depth, SDL_SWSURFACE | SDL_FULLSCREEN);
+	class->Screen = SDL_SetVideoMode(width, height, depth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
 #else
-	class->Screen = SDL_SetVideoMode(width, height, depth, SDL_SWSURFACE);
+	class->Screen = SDL_SetVideoMode(width, height, depth, SDL_HWSURFACE | SDL_DOUBLEBUF);
 #endif
 
 #endif
@@ -145,7 +153,8 @@ void TGameScreen_RefreshScreen(TGameScreen *class)
 	SDL_Flip(real_screen);
 	SDL_FreeSurface(doble);
 #else
-	SDL_UpdateRect(class->Screen, 0, 0, class->Width, class->Height);
+	//SDL_UpdateRect(class->Screen, 0, 0, class->Width, class->Height);
+	SDL_Flip(class->Screen);
 #endif
 	//SDL_FillRect(class->Screen, 0, 0xff000040);
 }

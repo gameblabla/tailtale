@@ -1,8 +1,8 @@
 CC=kos-cc
 SH_DIRECTORY=/opt/toolchains/dc/sh-elf/bin/
 
-CFLAGS = -g -Wall -I/opt/toolchains/dc/kos-ports/include/SDL -I. $(DEFINES)
-LDFLAGS = -lSDL -lm -ltremor
+CFLAGS = -Ofast -flto -Wall -I/opt/toolchains/dc/kos-ports/include/SDL -I. $(DEFINES)
+LDFLAGS = -Wl,--start-group -lc -lSDL -lm -ltremor -flto -Wl,--end-group -s
 DEFINES = -DNOTPSP -D__GP2X_SCREEN__ -DFRAMELIMIT -DDREAMCAST -DEMBED
 OUTPUT = tailtale
 
@@ -12,7 +12,11 @@ OBJS = ${SOURCES:.c=.o}
 all: romdisk.img ${OUTPUT} scramble
 
 scramble:
-	${SH_DIRECTORY}sh-elf-objcopy -R .stack -O binary ${OUTPUT} TAILTALE.BIN
+	${SH_DIRECTORY}sh-elf-objcopy -R .stack -O binary ${OUTPUT} main.bin
+	${KOS_BASE}/utils/scramble/scramble main.bin ./cd/1ST_READ.BIN
+	makeip ip.txt IP.BIN
+	mkisofs -V tailtale -G IP.BIN -joliet -rock -l -x cd -o "tailtale.iso" ./cd
+	cdi4dc tailtale.iso tailtale.cdi -d
 
 romdisk.img:
 	$(KOS_GENROMFS) -f romdisk.img -d romdisk -v
@@ -21,8 +25,7 @@ romdisk.o: romdisk.img
 	$(KOS_BASE)/utils/bin2o/bin2o romdisk.img romdisk romdisk.o
 
 ${OUTPUT}:${OBJS}
-	${CC} -o ${OUTPUT} ${SOURCES} ${CFLAGS} ${LDFLAGS}
+	${CC} ${CFLAGS} -o ${OUTPUT} ${SOURCES} ${LDFLAGS}
 	
 clean:
-	rm ${OBJS}
-	rm ${OUTPUT}
+	rm ${OBJS} ${OUTPUT} *.bin *.cdi *.iso *.BIN *.img cd/*.BIN

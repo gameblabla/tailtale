@@ -1,6 +1,6 @@
-===========
-Tail-Tale
-===========
+===============
+Tail-Tale v1.1
+===============
 Game by fumi2kick, rerofumi and pyonkey-matsuo 
 Sega Dreamcast port by gameblabla
 
@@ -13,3 +13,7 @@ Align 4 or more blocks of the same color to clear them !
 
 You can burn the cdi image with ImgBurn and the cdi plugin.
 Burn at 10x (or 12x if you can)
+
+Changelog:
+V1.1 : Recompiled against newer SDL version. This should speed it up a bit.
+It was already fullspeed before but at least this should reduce the power consumption.
